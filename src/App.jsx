@@ -1,33 +1,24 @@
-import { useEffect, useState } from "react";
-import { getUserLocation } from "./services/location";
-import { getWeather } from "./services/weather";
+import useWeather from "./hooks/useWeather";
+import Weather from "./components/Weather";
+import WeatherForecast from "./components/WeatherForecast";
 
 function App() {
-  const [weather, setWeather] = useState(null);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    getUserLocation()
-      .then(({ latitude, longitude }) => getWeather(latitude, longitude))
-      .then(setWeather)
-      .catch((err) => setError(err.message));
-  }, []);
+  const { weather, forecast, location, error } = useWeather();
 
   return (
     <div style={{ textAlign: "center", fontFamily: "Arial, sans-serif" }}>
       <h1>Väderapp</h1>
       {weather ? (
-        <div>
-          <h2>{weather.city}</h2>
-          <p>{weather.date} - {weather.time}</p>
-          <img src={weather.icon} alt={weather.weather} />
-          <p>{weather.temperature}°C - {weather.weather}</p>
-        </div>
+        // Använder Weather-komponenten här
+        <Weather weather={weather} />
       ) : error ? (
         <p>Fel: {error}</p>
       ) : (
         <p>Hämtar väder...</p>
       )}
+
+      {/* 5-dagarsprognosen */}
+      {location && <WeatherForecast forecast={forecast} />}
     </div>
   );
 }
